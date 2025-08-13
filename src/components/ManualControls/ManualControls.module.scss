@@ -1,0 +1,19 @@
+.manualControls {
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px;
+
+  button {
+    justify-content: center;
+  }
+
+  div {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+
+    button {
+      width: 48%;
+    }
+  }
+}

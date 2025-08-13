@@ -1,0 +1,23 @@
+.definitionContainer {
+  height: 100%;
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.defContainer,
+.answerContainer {
+  border: 1px solid gray;
+  border-radius: 12px;
+  padding: 12px;
+
+  .title {
+    font-weight: 100;
+    font-size: 0.9rem;
+  }
+}
+
+.defContainer {
+  flex: 1;
+  margin-bottom: 20px;
+}
