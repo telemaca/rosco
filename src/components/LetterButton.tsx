@@ -1,4 +1,3 @@
-import React from "react";
 import { LetterStatus } from "@/types/letters";
 
 interface LetterButtonProps {
@@ -24,15 +23,12 @@ const LetterButton: React.FC<LetterButtonProps> = ({ letter, status }) => {
   };
 
   return (
-    <button
+    <div
       className={`w-12 h-12 flex items-center justify-center rounded-full font-bold text-lg transition-colors duration-200 ${getClassName()}`}
-      disabled={
-        status !== LetterStatus.PENDING && status !== LetterStatus.SELECTED
-      }
       aria-label={`Letra ${letter}`}
     >
       {letter}
-    </button>
+    </div>
   );
 };
 

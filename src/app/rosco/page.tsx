@@ -1,21 +1,14 @@
 "use client";
-import { useState } from "react";
 import Head from "next/head";
 import { useOrientation } from "@/hooks/useOrientation";
-import { RotateDeviceOverlay } from "@/components/RotateDeviceOverlay";
-import { GameOverScreen } from "@/components/GameOverScreen";
-import { InGameScreen } from "@/components/InGameScreen/InGameScreen";
-
 import { RoscoGameProvider } from "@/contexts/RoscoGameContext";
+
+import { RotateDeviceOverlay } from "@/components/RotateDeviceOverlay";
+import { GameOverScreen } from "@/components/GameOverScreen/GameOverScreen";
+import { InGameScreen } from "@/components/InGameScreen/InGameScreen";
 
 export default function Home() {
   const isPortrait = useOrientation();
-  const [showQuestions, setShowQuestions] = useState<boolean>(false);
-
-  const handleGameAction = (action: () => void, show = true) => {
-    setShowQuestions(show);
-    action();
-  };
 
   return (
     <RoscoGameProvider>
@@ -29,11 +22,8 @@ export default function Home() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <RotateDeviceOverlay visible={isPortrait} />
-        <GameOverScreen onHandleGameAction={handleGameAction} />
-        <InGameScreen
-          showQuestions={showQuestions}
-          onHandleGameAction={handleGameAction}
-        />
+        <InGameScreen />
+        <GameOverScreen />
       </div>
     </RoscoGameProvider>
   );

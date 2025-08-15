@@ -1,12 +1,10 @@
-import React from "react";
-import { Question } from "../../types/questions";
+import { useRoscoGameContext } from "@/contexts/RoscoGameContext";
+
 import styles from "./QuestionDisplay.module.scss";
 
-interface QuestionDisplayProps {
-  question?: Question;
-}
+export const QuestionDisplay = () => {
+  const { currentQuestion } = useRoscoGameContext();
 
-const QuestionDisplay: React.FC<QuestionDisplayProps> = ({ question }) => {
   const capitalizeFirstLetter = (word: string | undefined) => {
     if (!word) {
       return "";
@@ -14,19 +12,19 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({ question }) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   };
 
-  const capitalizedAnswer = capitalizeFirstLetter(question?.answer);
+  const capitalizedAnswer = capitalizeFirstLetter(currentQuestion?.answer);
 
   return (
     <div className={styles.definitionContainer}>
       <p className="text-xl mb-2 text-gray-200">
         Empieza con{" "}
         <span className="font-semibold text-purple-400">
-          {question?.letter}
+          {currentQuestion?.letter}
         </span>
       </p>
       <div className={styles.defContainer}>
         <p className={styles.title}>DEFINICIÓN</p>
-        <p className="text-l text-gray-100">{question?.question}</p>
+        <p className="text-l text-gray-100">{currentQuestion?.question}</p>
       </div>
       <div className={styles.answerContainer}>
         <p className={styles.title}>RESPUESTA</p>
@@ -35,5 +33,3 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({ question }) => {
     </div>
   );
 };
-
-export default QuestionDisplay;

@@ -1,23 +1,19 @@
+import { useRoscoGameContext } from "@/contexts/RoscoGameContext";
 import styles from "./ManualControls.module.scss";
 
-interface ManualControlsProps {
-  onCorrect: () => void;
-  onIncorrect: () => void;
-  onPass: () => void;
-  isTimerStopped: boolean;
-}
+export const ManualControls = () => {
+  const {
+    gameState: { isTimerRunning },
+    markAnswer,
+    passQuestion,
+    handleGameAction,
+  } = useRoscoGameContext();
 
-export const ManualControls = ({
-  onCorrect,
-  onIncorrect,
-  onPass,
-  isTimerStopped,
-}: ManualControlsProps) => {
   return (
     <div className={`justify-center gap-4 mt-6 ${styles.manualControls}`}>
       <button
-        onClick={onCorrect}
-        disabled={isTimerStopped}
+        onClick={() => markAnswer(true)}
+        disabled={!isTimerRunning}
         className="flex px-4 py-3 bg-green-700 hover:bg-green-700 text-white rounded text-l"
       >
         <svg
@@ -33,8 +29,8 @@ export const ManualControls = ({
       </button>
       <div>
         <button
-          onClick={onIncorrect}
-          disabled={isTimerStopped}
+          onClick={() => markAnswer(false)}
+          disabled={!isTimerRunning}
           className="flex px-4 py-3 bg-red-700 hover:bg-red-700 text-white rounded text-l"
         >
           <svg
@@ -49,8 +45,8 @@ export const ManualControls = ({
           Incorrecto
         </button>
         <button
-          onClick={onPass}
-          disabled={isTimerStopped}
+          onClick={() => handleGameAction(passQuestion, false)}
+          disabled={!isTimerRunning}
           className="flex px-4 py-3 bg-yellow-600 hover:bg-yellow-600 text-white rounded text-l"
         >
           <svg

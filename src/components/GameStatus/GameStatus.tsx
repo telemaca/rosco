@@ -1,16 +1,10 @@
-import React from "react";
+import { useRoscoGameContext } from "@/contexts/RoscoGameContext";
 
-interface GameStatusProps {
-  score: number;
-  errors: number;
-  totalQuestions: number;
-}
+const GameStatus = () => {
+  const {
+    gameState: { score, errors, letters },
+  } = useRoscoGameContext();
 
-const GameStatus: React.FC<GameStatusProps> = ({
-  score,
-  errors,
-  totalQuestions,
-}) => {
   return (
     <div className="flex justify-end gap-4 items-center text-lg font-semibold">
       <div>
@@ -21,7 +15,7 @@ const GameStatus: React.FC<GameStatusProps> = ({
       </div>
       <div>
         <span className="text-blue-400">
-          {score + errors} / {totalQuestions}
+          {score + errors} / {letters.length}
         </span>
       </div>
     </div>

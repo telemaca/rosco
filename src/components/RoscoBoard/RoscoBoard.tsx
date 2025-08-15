@@ -1,6 +1,6 @@
 import React from "react";
-import LetterButton from "./LetterButton";
-import { LetterState } from "../hooks/useRoscoGame";
+import LetterButton from "../LetterButton";
+import { LetterState } from "@/types/letters";
 
 interface RoscoBoardProps {
   letters: LetterState[];

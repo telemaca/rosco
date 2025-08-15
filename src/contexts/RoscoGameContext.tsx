@@ -1,16 +1,28 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 import { useRoscoGame } from "@/hooks/useRoscoGame";
 
-const RoscoGameContext = createContext<ReturnType<typeof useRoscoGame> | null>(
-  null
-);
+type RoscoGameContextType = ReturnType<typeof useRoscoGame> & {
+  showQuestions: boolean;
+  handleGameAction: (action: () => void, show?: boolean) => void;
+};
+
+const RoscoGameContext = createContext<RoscoGameContextType | null>(null);
 
 export const RoscoGameProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const [showQuestions, setShowQuestions] = useState<boolean>(false);
+
+  const handleGameAction = (action: () => void, show = true) => {
+    setShowQuestions(show);
+    action();
+  };
+
   const roscoGame = useRoscoGame();
   return (
-    <RoscoGameContext.Provider value={roscoGame}>
+    <RoscoGameContext.Provider
+      value={{ ...roscoGame, showQuestions, handleGameAction }}
+    >
       {children}
     </RoscoGameContext.Provider>
   );
