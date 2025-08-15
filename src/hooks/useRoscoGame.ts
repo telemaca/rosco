@@ -1,42 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { questionsData, Question } from "../types/questions";
-import { alphabet } from "../types/alphabet";
-
-export enum LetterStatus {
-  PENDING = "pending",
-  CORRECT = "correct",
-  INCORRECT = "incorrect",
-  PASSED = "passed",
-  SELECTED = "selected",
-}
-
-export interface LetterState {
-  letter: string;
-  status: LetterStatus;
-  question?: Question;
-}
-
-export interface RoscoGameState {
-  letters: LetterState[];
-  currentQuestionIndex: number | null; // Índice de la pregunta activa
-  isGameOver: boolean;
-  score: number;
-  errors: number;
-  currentAnswer: string;
-  // Puedes añadir: timer, rounds, etc.
-}
-
-interface GameState {
-  letters: LetterState[];
-  currentQuestionIndex: number | null;
-  currentAnswer: string;
-  score: number;
-  errors: number;
-  isGameOver: boolean;
-  isTimerRunning: boolean;
-  timeLeft: number; // en segundos
-  hasStarted: boolean;
-}
+import { questionsData, Question } from "@/types/questions";
+import { alphabet } from "@/types/alphabet";
+import { LetterState, LetterStatus } from "@/types/letters";
+import { GameState } from "@/types/gameState";
+import { INITIAL_TIME } from "@/constants";
 
 const initialLettersState: LetterState[] = alphabet.map((letter) => ({
   letter,
@@ -52,9 +19,12 @@ export const useRoscoGame = () => {
     errors: 0,
     isGameOver: false,
     isTimerRunning: false,
-    timeLeft: 120,
-    hasStarted: false,
+    timeLeft: INITIAL_TIME,
   });
+
+  const [deviceType, setDeviceType] = useState<"mobile" | "tablet" | "desktop">(
+    "desktop"
+  );
 
   // Preparamos las preguntas al inicio para tenerlas asociadas a su letra
   const preparedQuestions = useMemo(() => {
@@ -87,28 +57,53 @@ export const useRoscoGame = () => {
     return () => clearInterval(interval);
   }, [gameState.isTimerRunning, gameState.isGameOver]);
 
-  // Función para iniciar o reiniciar el juego
+  // Detectar dispositivo solo en cliente
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+      setDeviceType("tablet");
+    } else if (
+      /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/i.test(
+        ua
+      )
+    ) {
+      setDeviceType("mobile");
+    } else {
+      setDeviceType("desktop");
+    }
+  }, []);
+
   const startGame = useCallback(() => {
     const firstIndex = questionsData.findIndex((q) => q.letter === "A");
     selectLetter("A");
+    const freshLetters = initialLettersState.map((letter) => ({ ...letter }));
 
     setGameState((prev) => ({
       ...prev,
-      letters: initialLettersState,
+      letters: freshLetters,
       currentQuestionIndex: firstIndex !== -1 ? firstIndex : 0,
       isTimerRunning: true,
       isGameOver: false,
-      hasStarted: true,
-      timeLeft: 120,
+      timeLeft: INITIAL_TIME,
       score: 0,
       errors: 0,
     }));
   }, [initialLettersState]);
 
-  const pauseGame = useCallback(() => {
+  const restartGame = useCallback(() => {
+    const firstIndex = questionsData.findIndex((q) => q.letter === "A");
+    selectLetter("A");
+    const freshLetters = initialLettersState.map((letter) => ({ ...letter }));
+
     setGameState((prev) => ({
       ...prev,
+      letters: freshLetters,
+      currentQuestionIndex: firstIndex !== -1 ? firstIndex : 0,
       isTimerRunning: false,
+      isGameOver: false,
+      timeLeft: INITIAL_TIME,
+      score: 0,
+      errors: 0,
     }));
   }, []);
 
@@ -224,56 +219,35 @@ export const useRoscoGame = () => {
     currentLetters: LetterState[],
     currentIdx: number
   ): number | null => {
-    // Paso 1: buscar siguiente pendiente
-    for (let i = 1; i <= currentLetters.length; i++) {
-      const idx = (currentIdx + i) % currentLetters.length;
-      if (currentLetters[idx].status === LetterStatus.PENDING) {
+    const total = currentLetters.length;
+
+    // Recorremos en bucle desde la siguiente letra
+    for (let i = 1; i <= total; i++) {
+      const idx = (currentIdx + i) % total;
+
+      // Avanzar a cualquier letra que esté PENDING o PASSED
+      if (
+        currentLetters[idx].status === LetterStatus.PENDING ||
+        currentLetters[idx].status === LetterStatus.PASSED
+      ) {
         return idx;
       }
     }
 
-    // Paso 2: si no hay más pendientes, buscar PASSED y reiniciarlas
-    const hasPassed = currentLetters.some(
-      (l) => l.status === LetterStatus.PASSED
-    );
-    if (hasPassed) {
-      const resetLetters = currentLetters.map((l) =>
-        l.status === LetterStatus.PASSED
-          ? { ...l, status: LetterStatus.PENDING }
-          : l
-      );
-      setGameState((prev) => ({
-        ...prev,
-        letters: resetLetters,
-      }));
-
-      const firstReset = resetLetters.findIndex(
-        (l) => l.status === LetterStatus.PENDING
-      );
-      return firstReset !== -1 ? firstReset : null;
-    }
-
-    // Paso 3: no hay más pendientes ni pasadas → fin del juego
+    // Si no hay ni PENDING ni PASSED, significa que todas están respondidas → fin
     return null;
-  };
-
-  const setAnswer = (answer: string) => {
-    setGameState((prev) => ({
-      ...prev,
-      currentAnswer: answer,
-    }));
   };
 
   // Propiedades y funciones a exponer
   return {
     gameState,
-    setAnswer,
-    pauseGame,
     resumeGame,
     selectLetter,
     markAnswer,
     passQuestion,
     startGame,
+    restartGame,
+    deviceType,
     currentQuestion:
       gameState.currentQuestionIndex !== null
         ? questionsData[gameState.currentQuestionIndex]

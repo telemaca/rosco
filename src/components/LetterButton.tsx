@@ -1,5 +1,5 @@
 import React from "react";
-import { LetterStatus } from "../hooks/useRoscoGame";
+import { LetterStatus } from "@/types/letters";
 
 interface LetterButtonProps {
   letter: string;
