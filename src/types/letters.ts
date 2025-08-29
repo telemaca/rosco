@@ -1,4 +1,4 @@
-import { Question } from "./questions";
+import { Definition } from "./questions";
 
 export enum LetterStatus {
   PENDING = "pending",
@@ -11,5 +11,5 @@ export enum LetterStatus {
 export interface LetterState {
   letter: string;
   status: LetterStatus;
-  question?: Question;
+  question?: Definition;
 }

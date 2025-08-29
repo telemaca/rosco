@@ -1,0 +1,185 @@
+$primary-color: #3498db;
+$secondary-color: #2c3e50;
+$accent-color: #e74c3c;
+$text-light: #7f8c8d;
+$white: #ffffff;
+
+$border-radius-lg: 20px;
+$border-radius-xl: 50px;
+
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
+  transition: $property $duration $timing;
+}
+
+@mixin hover-lift {
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.mainContainer {
+  background: rgba($white, 0.95);
+  border-radius: $border-radius-lg;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 10px;
+  color: $secondary-color;
+  letter-spacing: 2px;
+}
+
+.gameInfo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  margin: 12px 0;
+  text-align: left;
+}
+
+.infoSection {
+  padding: 20px;
+
+  h3 {
+    font-size: 1.3rem;
+    color: $secondary-color;
+    margin-bottom: 15px;
+    font-weight: 500;
+  }
+
+  p {
+    color: $text-light;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+}
+
+.rulesList {
+  list-style: none;
+  padding: 0;
+
+  li {
+    padding: 4px 0;
+    color: $text-light;
+    font-size: 0.95rem;
+    position: relative;
+    padding-left: 20px;
+
+    &:before {
+      content: "•";
+      color: $primary-color;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+  }
+}
+
+.startButton {
+  background: $primary-color;
+  color: $white;
+  padding: 18px 60px;
+  border: none;
+  border-radius: $border-radius-xl;
+  font-size: 1.1rem;
+  cursor: pointer;
+  @include transition();
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: 0;
+
+  @include hover-lift;
+
+  &:hover {
+    box-shadow: 0 8px 25px rgba($primary-color, 0.3);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .mainContainer {
+    padding: 30px 40px;
+    max-width: 95%;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 25px;
+  }
+
+  .rosco {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 25px;
+
+    &::after {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .gameInfo {
+    gap: 25px;
+    margin: 25px 0;
+  }
+
+  .infoSection {
+    padding: 15px;
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+  }
+
+  .rulesList li {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .startButton {
+    padding: 15px 40px;
+    font-size: 1rem;
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .mainContainer {
+    max-width: 1100px;
+    padding: 80px;
+  }
+}

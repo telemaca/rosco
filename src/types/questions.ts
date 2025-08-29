@@ -1,110 +1,121 @@
 export interface Question {
   letter: string;
   question: string;
-  answer: string;
+  definition: string;
   position?: "contiene" | "empieza";
   // id: number;
   // category: string;
   // hint: string;
 }
 
+export type Definition = {
+  id: string;
+  letter: string;
+  definition: string;
+  answer: string;
+};
+
 // mock para maquetar
 export const questionsData: Question[] = [
   {
     letter: "A",
     question: "Mamífero de gran tamaño, inteligente y con trompa.",
-    answer: "elefante",
+    definition: "elefante",
   },
-  { letter: "B", question: "Capital de Francia.", answer: "paris" },
-  { letter: "C", question: "Satélite natural de la Tierra.", answer: "LUNA" },
+  { letter: "B", question: "Capital de Francia.", definition: "paris" },
+  {
+    letter: "C",
+    question: "Satélite natural de la Tierra.",
+    definition: "LUNA",
+  },
   {
     letter: "D",
     question: "Dícese de la cualidad de ser fiel.",
-    answer: "LEALTAD",
+    definition: "LEALTAD",
   },
   {
     letter: "E",
     question: "Árbol frutal muy conocido, con manzanas.",
-    answer: "MANZANO",
+    definition: "MANZANO",
   },
   {
     letter: "F",
     question: "Instrumento musical de viento con teclado.",
-    answer: "FLAUTA",
+    definition: "FLAUTA",
   },
   {
     letter: "G",
     question: "Continente donde se encuentra Egipto.",
-    answer: "AFRICA",
+    definition: "AFRICA",
   },
-  { letter: "H", question: 'En inglés, "hola".', answer: "HELLO" },
+  { letter: "H", question: 'En inglés, "hola".', definition: "HELLO" },
   {
     letter: "I",
     question: "País donde se encuentra la Gran Muralla.",
-    answer: "CHINA",
+    definition: "CHINA",
   },
   {
     letter: "J",
     question: "Mamífero marino conocido por su inteligencia.",
-    answer: "DELFIN",
+    definition: "DELFIN",
   },
-  { letter: "L", question: "Fruto del olivo.", answer: "ACEITUNA" },
-  { letter: "M", question: "Capital de Italia.", answer: "ROMA" },
-  { letter: "N", question: "Satélite natural de Marte.", answer: "FOBOS" },
+  { letter: "L", question: "Fruto del olivo.", definition: "ACEITUNA" },
+  { letter: "M", question: "Capital de Italia.", definition: "ROMA" },
+  { letter: "N", question: "Satélite natural de Marte.", definition: "FOBOS" },
   {
     letter: "Ñ",
     question: "Ave domesticable, de carne blanca y pico curvado.",
-    answer: "ÑANDU",
+    definition: "ÑANDU",
   },
   {
     letter: "O",
     question: "Planeta del sistema solar más cercano al Sol.",
-    answer: "MERCURIO",
+    definition: "MERCURIO",
   },
   {
     letter: "P",
     question: "Continente más pequeño del mundo.",
-    answer: "OCEANIA",
+    definition: "OCEANIA",
   },
   {
     letter: "Q",
     question: "Máquina que realiza tareas complejas de forma automática.",
-    answer: "ROBOT",
+    definition: "ROBOT",
   },
   {
     letter: "R",
     question: "Elemento químico con símbolo Re.",
-    answer: "RENIO",
+    definition: "RENIO",
   },
   {
     letter: "S",
     question: "Actor que interpretó a Neo en Matrix.",
-    answer: "KEANU",
+    definition: "KEANU",
   },
-  { letter: "T", question: "La capital de España.", answer: "MADRID" },
+  { letter: "T", question: "La capital de España.", definition: "MADRID" },
   {
     letter: "U",
     question: "Continente ubicado en el hemisferio sur.",
-    answer: "AUSTRALIA",
+    definition: "AUSTRALIA",
   },
   {
     letter: "V",
     question: "El idioma oficial de Brasil.",
-    answer: "PORTUGUES",
+    definition: "PORTUGUES",
   },
   {
     letter: "X",
     question: 'Nombre de pila del escritor de "Don Quijote de la Mancha".',
-    answer: "MIGUEL",
+    definition: "MIGUEL",
   },
   {
     letter: "Y",
     question: 'Palabra que significa "y" en inglés.',
-    answer: "AND",
+    definition: "AND",
   },
   {
     letter: "Z",
     question: "Reptil alargado y sin patas.",
-    answer: "SERPIENTE",
+    definition: "SERPIENTE",
   },
 ];

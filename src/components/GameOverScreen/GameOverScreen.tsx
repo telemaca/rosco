@@ -3,14 +3,14 @@ import { useRoscoGameContext } from "@/contexts/RoscoGameContext";
 
 export const GameOverScreen = () => {
   const {
-    gameState: { score, isGameOver, errors },
+    gameState: { score, isGameOver, errors, loading },
     restartGame,
     handleGameAction,
   } = useRoscoGameContext();
   const answered = score + errors;
   const hasPassedAnswers = answered < 25;
 
-  return isGameOver ? (
+  return isGameOver && !loading ? (
     <div className="flex flex-col items-center">
       <h2 className="text-4xl font-bold mb-4 text-gray-100">¡Fin del juego!</h2>
       <p className="text-2xl mb-6 text-gray-300">

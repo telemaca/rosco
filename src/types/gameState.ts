@@ -9,4 +9,5 @@ export interface GameState {
   isGameOver: boolean;
   isTimerRunning: boolean;
   timeLeft: number; // en segundos
+  loading: boolean;
 }

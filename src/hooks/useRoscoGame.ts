@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { questionsData, Question } from "@/types/questions";
+import { Definition } from "@/types/questions";
 import { alphabet } from "@/types/alphabet";
 import { LetterState, LetterStatus } from "@/types/letters";
 import { GameState } from "@/types/gameState";
@@ -20,20 +20,64 @@ export const useRoscoGame = () => {
     isGameOver: false,
     isTimerRunning: false,
     timeLeft: INITIAL_TIME,
+    loading: true,
   });
 
   const [deviceType, setDeviceType] = useState<"mobile" | "tablet" | "desktop">(
     "desktop"
   );
 
+  const [definitions, setDefinitions] = useState<Definition[]>([]);
+
+  const fetchDefinitions = useCallback(
+    async (forceRefresh = false): Promise<Definition[]> => {
+      const cached = localStorage.getItem("definitionsCache");
+
+      if (!forceRefresh && cached) {
+        const { data, timestamp } = JSON.parse(cached);
+        const isExpired = Date.now() - timestamp > 24 * 60 * 60 * 1000; // 24h
+
+        if (!isExpired) {
+          setDefinitions(data);
+          setGameState({ ...gameState, loading: false });
+          return data;
+        }
+      }
+
+      // Fetch nuevo
+      const res = await fetch("/api/proxy");
+      const data: Definition[] = await res.json();
+      setDefinitions(data);
+      setGameState({ ...gameState, loading: false });
+
+      localStorage.setItem(
+        "definitionsCache",
+        JSON.stringify({ data, timestamp: Date.now() })
+      );
+
+      return data;
+    },
+    []
+  );
+
+  useEffect(() => {
+    const loadDefinitions = async () => {
+      await fetchDefinitions(false); // usa cache si está válido
+    };
+    loadDefinitions();
+  }, [fetchDefinitions]);
+
   // Preparamos las preguntas al inicio para tenerlas asociadas a su letra
   const preparedQuestions = useMemo(() => {
-    const questionMap = new Map<string, Question>();
-    questionsData.forEach((q) => {
-      questionMap.set(q.letter.toUpperCase(), q);
-    });
-    return questionMap;
-  }, []);
+    if (definitions.length === 25) {
+      const questionMap = new Map<string, Definition>();
+      definitions.forEach((q) => {
+        questionMap.set(q.letter.toUpperCase(), q);
+      });
+      return questionMap;
+    }
+    return new Map<string, Definition>();
+  }, [definitions]);
 
   // Cronómetro
   useEffect(() => {
@@ -74,7 +118,7 @@ export const useRoscoGame = () => {
   }, []);
 
   const startGame = useCallback(() => {
-    const firstIndex = questionsData.findIndex((q) => q.letter === "A");
+    const firstIndex = definitions.findIndex((q) => q.letter === "A");
     selectLetter("A");
     const freshLetters = initialLettersState.map((letter) => ({ ...letter }));
 
@@ -89,23 +133,6 @@ export const useRoscoGame = () => {
       errors: 0,
     }));
   }, [initialLettersState]);
-
-  const restartGame = useCallback(() => {
-    const firstIndex = questionsData.findIndex((q) => q.letter === "A");
-    selectLetter("A");
-    const freshLetters = initialLettersState.map((letter) => ({ ...letter }));
-
-    setGameState((prev) => ({
-      ...prev,
-      letters: freshLetters,
-      currentQuestionIndex: firstIndex !== -1 ? firstIndex : 0,
-      isTimerRunning: false,
-      isGameOver: false,
-      timeLeft: INITIAL_TIME,
-      score: 0,
-      errors: 0,
-    }));
-  }, []);
 
   const resumeGame = useCallback(() => {
     setGameState((prev) => ({
@@ -177,6 +204,27 @@ export const useRoscoGame = () => {
     },
     [gameState.letters, preparedQuestions, gameState.isGameOver]
   );
+
+  const restartGame = useCallback(async () => {
+    setGameState({ ...gameState, loading: true });
+    const data = await fetchDefinitions(true); // fuerza nuevo fetch
+    const firstIndex = data.findIndex((q) => q.letter === "A");
+
+    selectLetter("A");
+    const freshLetters = initialLettersState.map((letter) => ({ ...letter }));
+
+    setGameState((prev) => ({
+      ...prev,
+      letters: freshLetters,
+      currentQuestionIndex: firstIndex !== -1 ? firstIndex : 0,
+      isTimerRunning: false,
+      isGameOver: false,
+      timeLeft: INITIAL_TIME,
+      score: 0,
+      errors: 0,
+      loading: false,
+    }));
+  }, [fetchDefinitions, selectLetter]);
 
   const markAnswer = useCallback(
     (isCorrect: boolean) => {
@@ -250,7 +298,7 @@ export const useRoscoGame = () => {
     deviceType,
     currentQuestion:
       gameState.currentQuestionIndex !== null
-        ? questionsData[gameState.currentQuestionIndex]
+        ? definitions[gameState.currentQuestionIndex]
         : undefined,
   };
 };

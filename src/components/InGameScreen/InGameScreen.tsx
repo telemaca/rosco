@@ -11,7 +11,7 @@ import { INITIAL_TIME } from "@/constants";
 
 export const InGameScreen = () => {
   const {
-    gameState: { isTimerRunning, timeLeft, isGameOver, letters },
+    gameState: { isTimerRunning, timeLeft, isGameOver, letters, loading },
     startGame,
     resumeGame,
     restartGame,
@@ -53,6 +53,10 @@ export const InGameScreen = () => {
       />
     ) : null;
   };
+
+  if (loading) {
+    return <div>CARGANDO...</div>;
+  }
 
   return isGameOver ? null : (
     <div className="w-full max-w-3xl">
